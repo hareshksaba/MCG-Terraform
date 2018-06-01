@@ -13,8 +13,8 @@ module "website" {
   source    = "git::https://github.com/cloudposse/terraform-aws-s3-website.git?ref=master"
   namespace = "cp"
   stage     = "prod"
-  name      = "app"
-  hostname  = "docs.prod.cloudposse.org"
+  name      = "hareshkanagasabapathi12345-app"
+  hostname  = "hkby.docs.prod.cloudposse.org"
 
   deployment_arns = {
     "arn:aws:s3:::principal1" = ["/prefix1", "/prefix2"]
