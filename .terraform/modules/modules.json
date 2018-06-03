@@ -1,1 +1,1 @@
-{"Modules":[{"Source":"./aws_AutoScale_module","Key":"1.aws_AutoScale_module;./aws_AutoScale_module","Version":"","Dir":".terraform/modules/76163b23d3ab9009b6ac540126fa88a1","Root":""}]}
+{"Modules":[{"Source":"./aws_S3_module","Key":"1.aws_S3_module;./aws_S3_module","Version":"","Dir":".terraform/modules/b5a857f504e9edcd00e5531cea3d1f03","Root":""}]}

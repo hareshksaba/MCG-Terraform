@@ -7,14 +7,14 @@ provider "aws" {
 
 data "aws_availability_zones" "available" {}
 
-module "aws_AutoScale_module" {
+/*module "aws_AutoScale_module" {
   source = "./aws_AutoScale_module"
-}
+}*/
 
-/*module "aws_S3_module" {
+module "aws_S3_module" {
   source = "./aws_S3_module"
 }
-*/
+
 
 /*module "aws_IAM_module" {
   source = "./aws_IAM_module"
