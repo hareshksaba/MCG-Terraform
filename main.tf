@@ -11,9 +11,9 @@ module "aws_S3_module" {
   source = "./aws_S3_module"
 }
 
-module "aws_LB_module" {
+/*module "aws_LB_module" {
   source = "./aws_LB_module"
-}
+}*/
 
 module "aws_AutoScale_module" {
   source = "./aws_AutoScale_module"
