@@ -1,1 +1,1 @@
-{"Modules":[{"Source":"./aws_S3_module","Key":"1.aws_S3_module;./aws_S3_module","Version":"","Dir":".terraform/modules/b5a857f504e9edcd00e5531cea3d1f03","Root":""}]}
+{"Modules":[{"Source":"./aws_S3_module","Key":"1.aws_S3_module;./aws_S3_module","Version":"","Dir":".terraform/modules/b5a857f504e9edcd00e5531cea3d1f03","Root":""},{"Source":"./aws_ALB_module","Key":"1.aws_ALB_module;./aws_ALB_module","Version":"","Dir":".terraform/modules/6f4e04be0aa3b270635d0b4954f791cb","Root":""}]}
