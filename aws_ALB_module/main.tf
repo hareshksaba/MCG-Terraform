@@ -1,29 +1,45 @@
-variable "lb_sg" {}
+
+variable "security_group_id" {
+  type = "string"
+  default = "sg-960d98e7"
+}
 
 data "aws_security_group" "selected" {
   id = "${var.security_group_id}"
 }
 
+resource "aws_subnet" "subnet" {
+  vpc_id     = "${data.aws_security_group.selected.vpc_id}"
+  cidr_block = "10.0.1.0/24"
+}
+
+
+data "aws_subnet_ids" "public" {
+  vpc_id     = "${data.aws_security_group.selected.vpc_id}"
+}
 
 resource "aws_lb" "MCH-ALB" {
-  name               = "mch-alb"
+  name               = "test-lb-tf"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = ["${aws_security_group.lb_sg.id}"]
-  subnets            = ["${aws_subnet.public.*.id}"]
+  security_groups    = ["${var.security_group_id}"]
+  subnets            = ["${aws_subnet.subnet.*.id}"]
 
   enable_deletion_protection = true
 
-  access_logs {
-    bucket  = "${data.aws_s3_bucket.lb_logs.bucket}"
-    prefix  = "mch-alb"
-    enabled = true
-  }
 
   tags {
     Environment = "production"
   }
 }
+
+resource "aws_lb_target_group" "test" {
+  name     = "tf-example-lb-tg"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id     = "${data.aws_security_group.selected.vpc_id}"
+}
+
 
 resource "aws_lb_listener" "front_end" {
   load_balancer_arn = "${aws_lb.MCH-ALB.arn}"
@@ -33,7 +49,7 @@ resource "aws_lb_listener" "front_end" {
   certificate_arn   = "arn:aws:iam::187416307283:server-certificate/test_cert_rab3wuqwgja25ct3n4jdj2tzu4"
 
   default_action {
-    target_group_arn = "${aws_lb_target_group.MCH-ALB.arn}"
+    target_group_arn = "${aws_lb_target_group.test.arn}"
     type             = "forward"
   }
 }
@@ -44,26 +60,33 @@ resource "aws_lb_listener_rule" "static" {
 
   action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.static.arn}"
+    target_group_arn = "${aws_lb_target_group.test.arn}"
   }
 
   condition {
     field  = "path-pattern"
-    values = ["/static/*"]
+    values = ["/test/*"]
   }
 }
-resource "aws_lb_target_group" "test" {
-  name     = "tf-example-lb-tg"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = "${aws_vpc.main.id}"
+
+/* Attempt to get autoscaling group name so that it can be attached to the below resource aws_autoscaling_attachment
+    This is still not working as expected
+*/
+data "aws_autoscaling_groups" "groups" {
+  filter {
+    name = "key"
+    values = ["name"]
+  }
+
+  filter {
+    name = "value"
+    values = ["auto_scaling_group_name"]
+  }
 }
 
-resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
-}
+resource "aws_autoscaling_attachment" "autoscale_attachment" {
+  alb_target_group_arn   = "${aws_lb_target_group.test.arn}"
 
-resource "aws_autoscaling_attachment" "asg_attachment_bar" {
-  autoscaling_group_name = "${aws_autoscaling_group.asg.id}"
-  elb                    = "${aws_elb.bar.id}"
+  // Need to figure out a way to dynamically add autoscaliing group name
+  autoscaling_group_name = "terraform-asg-example"  
 }

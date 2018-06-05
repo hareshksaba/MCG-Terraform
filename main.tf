@@ -11,8 +11,8 @@ Application Load Balancer with a target group that will contain the EC2s from th
 # Setting AWS as provider and setting default region using variables
 provider "aws" {
   version    = "~> 1.20"
-  access_key = "${var.access_key}"
-  secret_key = "${var.secret_key}"
+ # access_key = "${var.access_key}"
+ # secret_key = "${var.secret_key}"
   region     = "${var.region}"
 }
 
