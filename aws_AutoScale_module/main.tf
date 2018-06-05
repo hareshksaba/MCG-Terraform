@@ -35,6 +35,12 @@ resource "aws_autoscaling_group" "MCH-autoscaling-group" {
     create_before_destroy = true
   }
 
+   tag {
+    key                 = "name"
+    value               = "auto_scaling_group_name"
+    propagate_at_launch = true
+  }
+
 }
 
 resource "aws_autoscaling_policy" "MCH-scaling-policy" {
