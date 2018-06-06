@@ -1,13 +1,15 @@
-
+# stores security group id
 variable "security_group_id" {
   type = "string"
   default = "sg-960d98e7"
 }
 
+# data is populated from above variable
 data "aws_security_group" "selected" {
   id = "${var.security_group_id}"
 }
 
+# Vpc id gets generated from security id
 resource "aws_subnet" "subnet" {
   vpc_id     = "${data.aws_security_group.selected.vpc_id}"
   cidr_block = "10.0.1.0/16"
@@ -18,6 +20,7 @@ data "aws_subnet_ids" "public" {
   vpc_id     = "${data.aws_security_group.selected.vpc_id}"
 }
 
+# createing an application load balancer
 resource "aws_lb" "MCH-ALB" {
   name               = "test-lb-tf"
   internal           = false
@@ -33,6 +36,7 @@ resource "aws_lb" "MCH-ALB" {
   }
 }
 
+# application load balancer needs be attached with a target group and target ports
 resource "aws_lb_target_group" "test" {
   name     = "tf-example-lb-tg"
   port     = 80
@@ -40,7 +44,7 @@ resource "aws_lb_target_group" "test" {
   vpc_id     = "${data.aws_security_group.selected.vpc_id}"
 }
 
-
+#Load balancer will listen for https requests through port 443 and forward request to above target group
 resource "aws_lb_listener" "front_end" {
   load_balancer_arn = "${aws_lb.MCH-ALB.arn}"
   port              = "443"

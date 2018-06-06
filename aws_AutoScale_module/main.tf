@@ -1,3 +1,6 @@
+#Autoscaling configuration
+
+#Get AWS AMI info and assign it to name ubuntu
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -14,6 +17,7 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+# specify resource configuration like type of instance and the image id
 resource "aws_launch_configuration" "MCH-launch-config" {
   name_prefix   = "MCH-AutoScaling-LC-"
   image_id      = "${data.aws_ami.ubuntu.id}"
@@ -24,11 +28,13 @@ resource "aws_launch_configuration" "MCH-launch-config" {
   }
 }
 
+#Create aws autoscaling group and attach above launch configuration to this group
 resource "aws_autoscaling_group" "MCH-autoscaling-group" {
   availability_zones   = ["us-west-2a", "us-west-2b"]
   name                 = "terraform-asg-example"
   launch_configuration = "${aws_launch_configuration.MCH-launch-config.name}"
-  min_size             = 2  max_size             = 5
+  min_size             = 2  
+  max_size             = 5
 
 
   lifecycle {
@@ -42,6 +48,9 @@ resource "aws_autoscaling_group" "MCH-autoscaling-group" {
   }
 
 }
+
+#Create autoscaling policy and then attach policy to the auto scaling group
+#Use predefined custom metric to create cpu usage of 85%
 
 resource "aws_autoscaling_policy" "MCH-scaling-policy" {
   name                   = "MCH-scaling-policy"
